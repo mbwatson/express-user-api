@@ -1,12 +1,33 @@
 const express = require('express')
-const app = express()
+const mongoose = require('mongoose')
+const bodyParser = require('body-parser')
+const cors = require('cors')
+
+const userPath = '/'
 const port = 3030
 
-app.listen(port, () => {
-    console.log(`Listening on port ${ port }.`)
-})
+// Connection to DB
+mongoose.connect('mongodb://mongodb')
+    .then( () => {
+        console.log('Database Started')
+    })
+    .catch( err => {
+        console.error('Backend error:', err.stack)
+        process.exit(1)
+    })
 
-app.get('/', (req, res) => {
-        res.send('Hello, from om Express!')
-    }
-)
+// Routes and Backend Functionalities
+const userRoutes = require('./src/routes/UserRoutes')
+
+// App Instance
+const app = express()
+app.use(express.static('public'))
+app.use(cors())
+app.use(bodyParser.urlencoded({ extended: true }))
+app.use(bodyParser.json())
+app.use(userPath, userRoutes)
+
+// Execute App
+app.listen(port, () => {
+    console.log(`Backend listening on port ${ port }.`)
+})

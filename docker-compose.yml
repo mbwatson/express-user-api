@@ -1,9 +1,15 @@
 version: '3'
 
 services:
-  node:
+  mongodb:
+    image: mongo
+    ports:
+      - "27017:27017"
+  api:
     build: .
     ports:
       - "3030:3030"
     volumes:
       - .:/app
+    depends_on:
+      - mongodb

@@ -1,0 +1,182 @@
+const express = require('express')
+const app = express()
+const router = express.Router()
+const path = require('path')
+const mongoose = require('mongoose')
+const photoDir = path.join(__dirname, '../public/photos')
+const fs = require('fs')
+
+// Schema
+const User = require('../models/User')
+
+// Return array of all users
+router.get('/', (req, res) => {
+    User.find()
+    .select('username first_name last_name title email phone _id')
+    .exec()
+    .then( users => {
+        const response = {
+            count: users.length,
+            users: users.map( emp => {
+                return {
+                    username: emp.username,
+                    first_name: emp.first_name,
+                    last_name: emp.last_name,
+                    email: emp.email,
+                    phone: emp.phone,
+                    title: emp.title,
+                    _id: emp._id,
+                    request: {
+                        type: 'GET',
+                        url: `http://localhost:3030/${ emp.username }`
+                    },
+                }
+            })
+        }
+        res.status(200).json(response)
+    })
+    .catch( err => {
+        console.log(err)
+        res.status(500).json({ error: err })
+    })
+})
+
+// Delete all users
+router.delete('/delete/all', (req, res) => {
+    User.deleteMany()
+        .exec()
+        .then( users => {
+            res.status(200).json({ message: 'Deleted' })
+        })
+        .catch(err => {
+            res.status(500).json({ error: err })
+        })
+})
+
+// CREATE user with username
+router.post('/', (req, res) => {
+    const user = new User({
+        _id: new mongoose.Types.ObjectId(),
+        username: req.body.username,
+        email: `${ req.body.username }@domain.com`,
+        first_name: req.body.first_name || '',
+        last_name: req.body.last_name || '',
+        title: req.body.title || '',
+        phone: req.body.phone || '',
+    })
+    user.save()
+        .then( result => {
+            console.log(result)
+            res.status(201).json({
+                message: 'Created user successfully',
+                createdUser: {
+                    username: result.username,
+                    first_name: result.first_name,
+                    last_name: result.last_name,
+                    email: result.email,
+                    phone: result.phone,
+                    title: result.title,
+                    _id: result._id,
+                    photo: `http://localhost:3030/${ user.username }/photo`,
+                }
+            })
+        })
+        .catch( err => {
+            console.log(err)
+            res.status(400).send('Unable to save to database')
+        })
+})
+
+// READ and return user info in JSON
+router.get('/:username', (req, res) => {
+    const username = req.params.username
+    console.log(`Request for ${ username }`)
+    User.findOne({ username: username })
+        .select('username first_name last_name title email phone _id')
+        .exec()
+        .then( user => {
+            if (!user) {
+                console.log(` > ${ username } not found`)
+                return res.status(404).json({ message: `${ username } not found` })
+            }
+            console.log(` > ${ username } found`)
+            return res.status(200).json({
+                user: {
+                    ...user._doc,
+                    photo: `http://localhost:3030/${ user.username }/photo`,
+                },
+            })
+        })
+        .catch( err => {
+            res.status(500).json({ error: err })
+        })
+})
+
+// UPDATE user info in JSON
+router.patch('/:username', (req, res, next) => {
+    const username = req.params.username
+    const updates = {}
+    for (const ops of req.body) {
+        updates[ops.property] = ops.value
+    }
+    User.update({ username: username }, { $set: updates })
+        .exec()
+        .then( result => {
+            console.log(result)
+            res.status(200).json({
+                message: 'User updated',
+                request: {
+                    type: 'GET',
+                    url: `http://localhost:3030/${  username }`
+                }
+            })
+        })
+        .catch(err => {
+            console.log(err)
+            res.status(500).json({ error: err })
+        })
+})
+
+// DELETE user by username
+router.delete('/:username', (req, res) => {
+    const username = req.params.username
+    User.remove({ username: username })
+        .exec()
+        .then(user => {
+            console.log(user)
+            res.status(200).json({ message: 'User deleted'})
+        })
+        .catch(err => {
+            console.log(err)
+            res.status(500).json({ error: err })
+        })
+})
+
+// Return photo from username ( username from username@domain.com )
+router.route('/:username/photo').get( (req, res) => {
+    const username = req.params.username
+    console.log(`Request for photo (${ username })`)
+    const photoFilePath = path.resolve(photoDir, `${ username }.jpg`)
+    User.findOne({ username: username })
+        .exec()
+        .then( user => {
+            if (!user) {
+                console.log(` > ${ username } not found`)
+                return res.status(404).json({ message: `${ username } not found` })
+            } else {
+                console.log(` > ${ username } found`)
+                if (fs.existsSync(photoFilePath)) {
+                    console.log(` > return ${ username }.jpg`)
+                    res.status(200).sendFile(photoFilePath)
+                } else {
+                    console.log(' > return default.jpg')
+                    res.sendFile(path.resolve(photoDir, `default.jpg`))
+                }            
+            }
+        })
+        .catch( err => {
+            return res.status(500).json({ error: err })
+        })
+})
+
+module.exports = router
