@@ -2,6 +2,13 @@ FROM node:latest
 
 RUN apt-get update && apt-get install nano tree -y
 
+## run as non-root user -- this maybe should be elsewhere
+RUN groupadd -r nodejs \
+   && useradd -m -r -g nodejs nodejs
+
+USER nodejs
+##
+
 RUN mkdir app
 WORKDIR /app
 
