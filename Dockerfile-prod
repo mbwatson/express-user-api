@@ -18,7 +18,7 @@ RUN npm install -g
 COPY ./ ./
 
 ENV PATH /app/node_modules/.bin:$PATH
-ENV NODE_ENV development
+ENV NODE_ENV production
 
 EXPOSE 3030
 

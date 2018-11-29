@@ -8,7 +8,7 @@ WORKDIR /app
 COPY ./package*.json ./
 RUN npm install -g
 
-COPY ./ ./
+COPY . .
 
 ENV PATH /app/node_modules/.bin:$PATH
 ENV NODE_ENV development
