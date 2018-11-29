@@ -4,8 +4,6 @@ const bodyParser = require('body-parser')
 const cors = require('cors')
 const axios = require('axios')
 
-var usernames = require('./src/public/usernames.json')
-
 const userPath = '/'
 const port = 3030
 
