@@ -11,12 +11,13 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "mongoose": "^5.3.12"
-  },
-  "devDependencies": {
+    "axios": "^0.18.0",
+    "mongoose": "^5.3.12",
     "body-parser": "^1.18.3",
     "cors": "^2.8.5",
-    "express": "^4.16.4",
+    "express": "^4.16.4"
+  },
+  "devDependencies": {
     "nodemon": "^1.18.6"
   }
 }
