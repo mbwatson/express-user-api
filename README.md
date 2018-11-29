@@ -7,23 +7,43 @@ Simple API served with Express from the a Node Docker container.
 
 Serves to port 3030 with some basic [endpoints](#endpoints).
 
+## Getting Started
+
+1. Clone this repository.
+
+```bash
+$ git clone https://github.com/renciweb/express-user-api.git
+```
+
+2. Install dependencies.
+
+```bash
+$ npm install
+```
+
+3. Then you're ready to start things up.
+
 ## Starting the Service
 
 ### Development
 
 Build...
+
 ```bash
 $ docker-compose build
 ```
 and start...
+
 ```bash
 $ docker-compose up
 ```
-Or just...
+Or, more simply, just...
+
 ```bash
 $ docker-compose up -d --build
 ```
 to build and start detached in one line. Then stop with
+
 ```bash
 $ docker-compose down
 ```
