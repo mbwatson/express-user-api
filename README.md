@@ -29,7 +29,7 @@ DOMAIN_NAME=mydomain.org
 ```
 
 - DOMAIN_NAME
-    + This defines the default email address assigned to new  users. For example, setting `DOMAIN_NAME=mydomain.org` and posting a new user with username `johnDoe` will be initially stored with the email address `johnDoe@mydomain.org`. This can be changed later--see the `PATCH` route below.
+    + This defines the default email address assigned to new  users. For example, setting `DOMAIN_NAME=mydomain.org` and posting a new user with username `johnDoe` will be initially stored with the email address `johnDoe@mydomain.org`. This can be changed later--see the `PUT` route below.
 
 4. Then you're ready to start things up.
 
@@ -77,6 +77,7 @@ Serves to port 80 with some basic [endpoints](#endpoints).
     "last_name": "Doe",
     "email": "email@ddre.ss",
     "title": "CEO",
+    "aliases": ["Jane Doe", "J. Doe", "Jane B. Doe"]
     "phone": "123-456-7890",
 }
 ```
@@ -108,7 +109,7 @@ Thus the minimal payload required to create a new user is one containing a usern
 }
 ```
 
-Inspecting the source code, you'll find the the `email` field is also required, but because it is constructed at the time of creation, it is unnecessary to pass in. It can be edited (`PATCH`ed) later.
+Inspecting the source code, you'll find the the `email` field is also required, but because it is constructed at the time of creation, it is unnecessary to pass in. It can be edited later.
 
 ### `/:username` [GET] return JSON user with username `username`
 
@@ -121,13 +122,14 @@ A GET request to `http://HOSTNAME:PORT/jdoe` returns the user with username `jdo
     "last_name": "Doe",
     "email": "email@ddre.ss",
     "title": "CEO",
+    "aliases": ["Jane Doe", "J. Doe", "Jane B. Doe"]
     "phone": "123-456-7890"
 }
 ```
 
-### `/:username` [PATCH] update user with username `username`
+### `/:username` [PUT] update user with username `username`
 
-This route expects an array of propperty-value objects in the form here.
+This route expects an array of property-value objects in the form here.
 
 ```json
 [
@@ -151,11 +153,12 @@ For example, consider the following user information.
     "last_name": "Doe",
     "email": "email@ddre.ss",
     "title": "CEO",
+    "aliases": ["Jane Doe", "J. Doe", "Jane B. Doe"]
     "phone": "123-456-7890"
 }
 ```
 
-We can update this user with a `PATCH` request to `/jdoe` with the following payload.
+We can update this user with a `PUT` request to `/jdoe` with the following payload.
 
 ```json
 [
@@ -179,6 +182,42 @@ Then the user now looks like the following.
     "last_name": "Doe",
     "email": "email@ddre.ss",
     "title": "CFO",
+    "aliases": ["Jane Doe", "J. Doe", "Jane B. Doe"]
+    "phone": "888-888-8888"
+}
+```
+
+### `/:username/alias` [PUT] update user with username `username`
+
+We have separate routes for adding/removing user aliases one-at-a-time.
+This one is for adding an alias. The payload looks like the following.
+
+```json
+{
+    "alias": "J. B. Doe"
+}
+```
+
+### `/:username/alias` [DELETE] update user with username `username`
+
+Delete an alias. This payload looks identical.
+
+```json
+{
+    "alias": "J. Doe"
+}
+```
+
+Sending these alias requests would yield the following if we started with the last example.
+
+```json
+{
+    "username": "jdoe",
+    "first_name": "Jane",
+    "last_name": "Doe",
+    "email": "email@ddre.ss",
+    "title": "CFO",
+    "aliases": ["Jane Doe", "Jane B. Doe", "J. B. Doe"]
     "phone": "888-888-8888"
 }
 ```
