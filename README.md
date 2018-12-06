@@ -29,7 +29,7 @@ DOMAIN_NAME=mydomain.org
 ```
 
 - DOMAIN_NAME
-    + This defines the default email address assigned to new  users. For example, setting `DOMAIN_NAME=mydomain.org` and posting a new user with username `johnDoe` will be initially stored with the email address `johnDoe@mydomain.org`. This can be changed later--see the `PATCH` route below.
+    + This defines the default email address assigned to new  users. For example, setting `DOMAIN_NAME=mydomain.org` and posting a new user with username `johnDoe` will be initially stored with the email address `johnDoe@mydomain.org`. This can be changed later--see the `PUT` route below.
 
 4. Then you're ready to start things up.
 
@@ -108,7 +108,7 @@ Thus the minimal payload required to create a new user is one containing a usern
 }
 ```
 
-Inspecting the source code, you'll find the the `email` field is also required, but because it is constructed at the time of creation, it is unnecessary to pass in. It can be edited (`PATCH`ed) later.
+Inspecting the source code, you'll find the the `email` field is also required, but because it is constructed at the time of creation, it is unnecessary to pass in. It can be edited later.
 
 ### `/:username` [GET] return JSON user with username `username`
 
@@ -125,7 +125,7 @@ A GET request to `http://HOSTNAME:PORT/jdoe` returns the user with username `jdo
 }
 ```
 
-### `/:username` [PATCH] update user with username `username`
+### `/:username` [PUT] update user with username `username`
 
 This route expects an array of propperty-value objects in the form here.
 
@@ -155,7 +155,7 @@ For example, consider the following user information.
 }
 ```
 
-We can update this user with a `PATCH` request to `/jdoe` with the following payload.
+We can update this user with a `PUT` request to `/jdoe` with the following payload.
 
 ```json
 [
