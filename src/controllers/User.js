@@ -25,7 +25,7 @@ exports.list = (req, res) => {
                     _id: emp._id,
                     request: {
                         type: 'GET',
-                        url: `http://localhost:3030/${ emp.username }`
+                        url: `http://${req.headers.host}/${ emp.username }`
                     },
                 }
             })
@@ -61,7 +61,7 @@ exports.post = (req, res) => {
                     phone: result.phone,
                     title: result.title,
                     _id: result._id,
-                    photo: `http://localhost:3030/${ user.username }/photo`,
+                    photo: `http://${req.headers.host}/${ user.username }/photo`,
                 }
             })
         })
@@ -86,7 +86,7 @@ exports.get = (req, res) => {
             return res.status(200).json({
                 user: {
                     ...user._doc,
-                    photo: `http://localhost:3030/${ user.username }/photo`,
+                    photo: `http://${req.headers.host}/${ user.username }/photo`,
                 },
             })
         })
@@ -109,7 +109,7 @@ exports.put = (req, res) => {
                 message: 'User updated',
                 request: {
                     type: 'GET',
-                    url: `http://localhost:3030/${  username }`
+                    url: `http://${req.headers.host}/${  username }`
                 }
             })
         })

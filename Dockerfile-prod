@@ -3,10 +3,10 @@ FROM node:latest
 RUN apt-get update && apt-get install nano tree -y
 
 ## run as non-root user -- this maybe should be elsewhere
-RUN groupadd -r nodejs \
-   && useradd -m -r -g nodejs nodejs
-
-USER nodejs
+# RUN groupadd -r nodejs \
+#   && useradd -m -r -g nodejs nodejs
+# 
+# USER nodejs
 ##
 
 RUN mkdir app
@@ -20,6 +20,6 @@ COPY ./ ./
 ENV PATH /app/node_modules/.bin:$PATH
 ENV NODE_ENV production
 
-EXPOSE 3030
+EXPOSE 80
 
 CMD ["npm", "start"]

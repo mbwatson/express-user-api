@@ -2,9 +2,10 @@ const express = require('express')
 const mongoose = require('mongoose')
 const bodyParser = require('body-parser')
 const cors = require('cors')
+const axios = require('axios')
 
 const userPath = '/'
-const port = 3030
+const port = process.env.NODE_ENV == 'production' ? 80 : 3030
 
 // Connection to DB
 mongoose.connect('mongodb://mongodb')
