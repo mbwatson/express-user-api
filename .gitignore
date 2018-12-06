@@ -1,3 +1,2 @@
 node_modules/
-src/public/photos/
-src/public/usernames.json
+src/public/*
