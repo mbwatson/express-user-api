@@ -14,6 +14,10 @@ api.route('/').post(User.post)
 api.route('/:username').get(User.get)
 // Update user
 api.route('/:username').put(User.put)
+// Add user alias
+api.route('/:username/alias').put(User.aliasAdd)
+// Delete user alias
+api.route('/:username/alias').delete(User.aliasDelete)
 // Delete user
 api.route('/:username').delete(User.delete)
 // Return user photo
