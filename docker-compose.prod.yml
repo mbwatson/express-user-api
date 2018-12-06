@@ -13,9 +13,13 @@ services:
       - "80:80"
     volumes:
       - .:/app
-    depends_on:
-      - mongodb
+      - db:/data/db
     environment:
       - NODE_ENV=production
     env_file:
       - .env
+    depends_on:
+      - mongodb
+
+volumes:
+  db:

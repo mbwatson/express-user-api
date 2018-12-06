@@ -17,3 +17,6 @@ services:
       - NODE_ENV=development
     env_file:
       - .env
+
+volumes:
+  db:
