@@ -102,7 +102,6 @@ exports.put = (req, res) => {
     for (const incoming of req.body) {
         updates[incoming.property] = incoming.value
     }
-    // Check if value is an array, in which case union new and old.
     User.update({ username: username }, { $set: updates })
         .exec()
         .then(result => {
@@ -111,13 +110,73 @@ exports.put = (req, res) => {
                 message: 'User updated',
                 request: {
                     type: 'GET',
-                    url: `http://${req.headers.host}/${  username }`
+                    url: `http://${req.headers.host}/${ username }`
                 }
             })
         })
         .catch(err => {
             console.log(err)
             res.status(500).json({ error: err })
+        })
+}
+
+exports.aliasAdd = (req, res) => {
+    const username = req.params.username
+    console.log(username, req.body.alias)
+    User.update({ username: username }, { $push: { aliases: req.body.alias }})
+        .exec()
+        .then(result => {
+            console.log(result)
+            res.status(200).json({
+                message: 'User aliases updated',
+                request: {
+                    type: 'GET',
+                    url: `http://${req.headers.host}/${ username }`
+                }
+            })
+        })
+        .catch(err => {
+            console.log(err)
+            res.status(500).json({ error: err })
+        })
+}
+
+exports.aliasDelete = (req, res) => {
+    const username = req.params.username
+    const alias = req.body.alias
+    User.findOne({ username: username })
+        .exec()
+        .then(user => {
+            if (!user) {
+                console.log(` > ${ username } not found`)
+                return res.status(404).json({ message: `${ username } not found` })
+            } else {
+                console.log(` > ${ username } found`)
+                aliases = user.aliases
+                var index = aliases.indexOf(alias)
+                if (index > -1) {
+                    aliases.splice(index, 1)
+                }
+                User.update({ username: username }, { $set: { aliases: aliases } })
+                    .exec()
+                    .then(result => {
+                        console.log(result)
+                        res.status(200).json({
+                            message: 'User aliases updated',
+                            request: {
+                                type: 'GET',
+                                url: `http://${req.headers.host}/${ username }`
+                            }
+                        })
+                    })
+                    .catch(err => {
+                        console.log(err)
+                        res.status(500).json({ error: err })
+                    })
+            }
+        })
+        .catch(err => {
+            return res.status(500).json({ error: err })
         })
 }
 
