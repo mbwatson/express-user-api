@@ -21,7 +21,7 @@ $ npm install
 
 3. Define enfironment variables
 
-To define any defaults used by this API, create a file `.env` in the project root. The `.env` file may look like the following.
+To define any defaults used by this API, create a file `.env` in the project root. Use the existing `.env.example` file as a guide, which can be safely removed or renamed. The `.env` file may look like the following.
 
 ```bash
 $ cat .env
