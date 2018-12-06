@@ -1,11 +1,9 @@
 # Basic User API
 # Served by Express
 
-## What This Accomplished
+## What This Accomplishes
 
-Simple API served with Express from the a Node Docker container.
-
-Serves to port 3030 with some basic [endpoints](#endpoints).
+Simple API served via containerized Express and MongoDB.
 
 ## Getting Started
 
@@ -27,6 +25,8 @@ $ npm install
 
 ### Development
 
+Serves to port 3030 with some basic [endpoints](#endpoints).
+
 Build...
 
 ```bash
@@ -40,7 +40,7 @@ $ docker-compose up
 Or, more simply, just...
 
 ```bash
-$ docker-compose up -d --build
+$ docker-compose up --build -d
 ```
 to build and start detached in one line. Then stop with
 
@@ -49,6 +49,8 @@ $ docker-compose down
 ```
 
 ### Production
+
+Serves to port 80 with some basic [endpoints](#endpoints).
 
 ...
 
@@ -78,7 +80,7 @@ Receiving data from the routes, the controller defines the relationship between 
 
 ## Endpoints
 
-http://localhost:3030
+http://HOSTNAME:PORT
 
 ### `/` [GET] returns JSON array of users 
 ### `/` [POST] create a user
@@ -97,7 +99,7 @@ Inspecting the source code, you'll find the the `email` field is also required, 
 
 ### `/:username` [GET] return JSON user with username `username`
 
-A GET request to `http://localhost:3030/jdoe` returns the user with username `jdoe`, perhaps the JSON below would be returned.
+A GET request to `http://HOSTNAME:PORT/jdoe` returns the user with username `jdoe`, perhaps the JSON below would be returned.
 
 ```json
 {
