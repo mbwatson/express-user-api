@@ -15,4 +15,5 @@ services:
       - mongodb
     environment:
       - NODE_ENV=development
-      - DOMAIN_NAME=domain.com
+    env_file:
+      - .env

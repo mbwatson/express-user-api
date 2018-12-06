@@ -19,13 +19,23 @@ $ git clone https://github.com/renciweb/express-user-api.git
 $ npm install
 ```
 
-3. Then you're ready to start things up.
+3. Define enfironment variables
+
+To define any defaults used by this API, create a file `.env` in the project root. The `.env` file may look like the following.
+
+```bash
+$ cat .env
+DOMAIN_NAME=mydomain.org
+```
+
+- DOMAIN_NAME
+    + This defines the default email address assigned to new  users. For example, setting `DOMAIN_NAME=mydomain.org` and posting a new user with username `johnDoe` will be initially stored with the email address `johnDoe@mydomain.org`. This can be changed later--see the `PATCH` route below.
+
+4. Then you're ready to start things up.
 
 ## Starting the Service
 
 ### Development
-
-Serves to port 3030 with some basic [endpoints](#endpoints).
 
 Build...
 
@@ -37,6 +47,9 @@ and start...
 ```bash
 $ docker-compose up
 ```
+
+Serves to port 3030 with some basic [endpoints](#endpoints).
+
 Or, more simply, just...
 
 ```bash
