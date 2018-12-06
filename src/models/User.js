@@ -44,6 +44,11 @@ const User = new Schema({
         required: false,
         trim: true,
     },
+    aliases: {
+        type: Array,
+        required: false,
+        trim: true,
+    },
 },{
     collection: 'Staff'
 })

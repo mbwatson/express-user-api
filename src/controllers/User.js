@@ -6,33 +6,32 @@ const photoDir = path.join(__dirname, '../public/photos')
 const User = require('../models/User')
 
 exports.list = (req, res) => {
-    // const full_url = req.protocol + '//' + req.get('host') + req.originalUrl
-    // console.log(full_url)
     User.find()
-    .select('username first_name last_name title email phone _id')
+    .select('username first_name last_name title aliases email phone _id')
     .exec()
-    .then( users => {
+    .then(users => {
         const response = {
             count: users.length,
-            users: users.map( emp => {
+            users: users.map(user => {
                 return {
-                    username: emp.username,
-                    first_name: emp.first_name,
-                    last_name: emp.last_name,
-                    email: emp.email,
-                    phone: emp.phone,
-                    title: emp.title,
-                    _id: emp._id,
+                    username: user.username,
+                    first_name: user.first_name,
+                    last_name: user.last_name,
+                    email: user.email,
+                    phone: user.phone,
+                    title: user.title,
+                    aliases: user.aliases,
+                    _id: user._id,
                     request: {
                         type: 'GET',
-                        url: `http://${req.headers.host}/${ emp.username }`
+                        url: `http://${req.headers.host}/${ user.username }`
                     },
                 }
             })
         }
         res.status(200).json(response)
     })
-    .catch( err => {
+    .catch(err => {
         console.log(err)
         res.status(500).json({ error: err })
     })
@@ -45,11 +44,12 @@ exports.post = (req, res) => {
         email: `${ req.body.username }@${ process.env.DOMAIN_NAME }`,
         first_name: req.body.first_name || '',
         last_name: req.body.last_name || '',
+        aliases: req.body.title || [],
         title: req.body.title || '',
         phone: req.body.phone || '',
     })
     user.save()
-        .then( result => {
+        .then(result => {
             console.log(result)
             res.status(201).json({
                 message: 'Created user successfully',
@@ -60,12 +60,13 @@ exports.post = (req, res) => {
                     email: result.email,
                     phone: result.phone,
                     title: result.title,
+                    aliases: result.aliases,
                     _id: result._id,
                     photo: `http://${req.headers.host}/${ user.username }/photo`,
                 }
             })
         })
-        .catch( err => {
+        .catch(err => {
             console.log(err)
             res.status(400).send('Unable to save to database')
         })
@@ -75,9 +76,9 @@ exports.get = (req, res) => {
     const username = req.params.username
     console.log(`Request for ${ username }`)
     User.findOne({ username: username })
-        .select('username first_name last_name title email phone _id')
+        .select('username first_name last_name title email phone aliases _id')
         .exec()
-        .then( user => {
+        .then(user => {
             if (!user) {
                 console.log(` > ${ username } not found`)
                 return res.status(404).json({ message: `${ username } not found` })
@@ -90,7 +91,7 @@ exports.get = (req, res) => {
                 },
             })
         })
-        .catch( err => {
+        .catch(err => {
             res.status(500).json({ error: err })
         })
 }
@@ -98,12 +99,13 @@ exports.get = (req, res) => {
 exports.put = (req, res) => {
     const username = req.params.username
     const updates = {}
-    for (const ops of req.body) {
-        updates[ops.property] = ops.value
+    for (const incoming of req.body) {
+        updates[incoming.property] = incoming.value
     }
+    // Check if value is an array, in which case union new and old.
     User.update({ username: username }, { $set: updates })
         .exec()
-        .then( result => {
+        .then(result => {
             console.log(result)
             res.status(200).json({
                 message: 'User updated',
@@ -139,7 +141,7 @@ exports.photo = (req, res) => {
     const photoFilePath = path.resolve(photoDir, `${ username }.jpg`)
     User.findOne({ username: username })
         .exec()
-        .then( user => {
+        .then(user => {
             if (!user) {
                 console.log(` > ${ username } not found`)
                 return res.status(404).json({ message: `${ username } not found` })
@@ -154,7 +156,7 @@ exports.photo = (req, res) => {
                 }            
             }
         })
-        .catch( err => {
+        .catch(err => {
             return res.status(500).json({ error: err })
         })
 }
@@ -162,7 +164,7 @@ exports.photo = (req, res) => {
 exports.delete_all = (req, res) => {
     User.deleteMany()
         .exec()
-        .then( users => {
+        .then(users => {
             res.status(200).json({ message: 'Deleted' })
         })
         .catch(err => {
