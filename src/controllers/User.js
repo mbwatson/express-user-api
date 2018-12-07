@@ -7,7 +7,7 @@ const User = require('../models/User')
 
 exports.list = (req, res) => {
     User.find()
-    .select('username first_name last_name title email phone _id')
+    .select('username first_name last_name title email phone')
     .exec()
     .then( users => {
         const response = {
@@ -72,7 +72,7 @@ exports.get = (req, res) => {
     const username = req.params.username
     console.log(`Request for ${ username }`)
     User.findOne({ username: username })
-        .select('username first_name last_name title email phone _id')
+        .select('username first_name last_name title email phone')
         .exec()
         .then( user => {
             if (!user) {
