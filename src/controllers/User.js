@@ -6,14 +6,11 @@ const photoDir = path.join(__dirname, '../public/photos')
 const User = require('../models/User')
 
 exports.list = (req, res) => {
-    // const full_url = req.protocol + '//' + req.get('host') + req.originalUrl
-    // console.log(full_url)
     User.find()
     .select('username first_name last_name title email phone _id')
     .exec()
     .then( users => {
         const response = {
-            count: users.length,
             users: users.map( emp => {
                 return {
                     username: emp.username,
